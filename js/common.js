@@ -43,11 +43,30 @@ async function refreshTodos(){
   const snapshot  = await firebase.database().ref(`/users/${uid}/todos`).once('value'); //on 변경있을때마다 실시간, once 한꺼번에
   const todos = snapshot.val(); // todo-list 아이템들
 
+  // 비워준후 -> 목록추가
+  listEl.innerHTML = '';
+
   // todos를 순회하면서 list를 모두 appendChild하여 목록생성
   for(let [todoId, todo] of Object.entries(todos)){ // Object.entries(): 객체의 key + value를 배열로 반환
     const itemEl = document.createElement('div');
     itemEl.textContent = todo.title;
     itemEl.classList.add('item');
+
+    // todo.complete 클래스 붙여주기
+    if(todo.complete){ itemEl.classList.add('complete');}
+
+    // async해줘야함. 안그러면 DB업데이트 하기전에 refreshTodo()되서 화면이 제대로 반영이 안됨
+    itemEl.addEventListener('click', async e => {
+      //complete를 바꿔서 데이터베이스 업데이트
+      await firebase.database().ref(`/users/${uid}/todos/${todoId}`).update({
+        complete: !todo.complete
+      })
+
+      //화면 다시그려주기
+      refreshTodos();
+    })
+
+    // 리스트에 목록추가
     listEl.appendChild(itemEl);
   }
   listEl.classList.remove('todo-list--loading');
@@ -64,6 +83,8 @@ firebase.auth().onAuthStateChanged(function (user) {
 
   }
 })
+
+
 
 // 내코드 (Firebase인증 삽입전)
 // document.querySelector('#add-button').addEventListener('click', e => {
