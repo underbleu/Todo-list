@@ -30,7 +30,7 @@ document.querySelector('.todo-input').addEventListener('keypress', async e => { 
     })
     refreshTodos();
     // 목록생성후 input 비워주기
-    e.currentTarget.value = "";
+    e.target.value = ""; //e.currentTarget으로 하면 안비워지는 버그가있음
   }
 })
 
@@ -55,11 +55,23 @@ async function refreshTodos(){
     // todo.complete 클래스 붙여주기
     if(todo.complete){ itemEl.classList.add('complete');}
 
+    // 삭제 버튼 생성하기
+    const removeEl = document.createElement('div');
+    removeEl.textContent = '+';
+    itemEl.appendChild(removeEl);
+    removeEl.addEventListener('click', async e => {
+      e.stopPropagation(); //버블링을 막아줘야 click이벤트 -> 밑에있는 .complete클래스 달아주는 이벤트 실행안시킬수있음
+      // 삭제
+      await firebase.database().ref(`/users/${uid}/todos/${todoId}`).remove();
+      // 화면 다시 그려주기
+      refreshTodos();
+    })
+
     // async해줘야함. 안그러면 DB업데이트 하기전에 refreshTodo()되서 화면이 제대로 반영이 안됨
     itemEl.addEventListener('click', async e => {
       //complete를 바꿔서 데이터베이스 업데이트
-      await firebase.database().ref(`/users/${uid}/todos/${todoId}`).update({
-        complete: !todo.complete
+      await firebase.database().ref(`/users/${uid}/todos/${todoId}`).update({ //set통채로, update부분만 변경
+        complete: !todo.complete //if..else문을 부정연산자로 간단히 짜줄수 있음
       })
 
       //화면 다시그려주기
