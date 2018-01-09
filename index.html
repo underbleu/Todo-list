@@ -8,16 +8,33 @@
   <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
-  <div class="wrapper">
+  <button class="btn-login">login</button>
+
+  <div class="wrapper invisible">
     <h1 class="heading"><span>todo</span><span>list</span></h1>
     <div class="container">
       <input type="text" id="todo-input" class="todo-input" autofocus placeholder="What do you want to do?">
+      <!-- <div class="todo-input" contenteditable=""></div> -->
       <button id="add-button" class="add-button">add</button>
       <div id="todo-list" class="todo-list">
         <div class="item">Fast Campus Front-end 7s<span class="btn-delete">X</span></div>
       </div>
     </div>
   </div>
+
+  <script src="https://www.gstatic.com/firebasejs/4.8.1/firebase.js"></script>
+  <script>
+    // Firebase 자바스크립트 SDK를 구성하는 초기화 정보
+    var config = {
+      apiKey: "AIzaSyCLY846DYk1oSquZhhlMJVPJcjclY4urlk",
+      authDomain: "fds-fire.firebaseapp.com",
+      databaseURL: "https://fds-fire.firebaseio.com",
+      projectId: "fds-fire",
+      storageBucket: "",
+      messagingSenderId: "221159030789"
+    };
+    firebase.initializeApp(config);
+  </script>
   <script src="./js/common.js"></script>
 </body>
 </html>
